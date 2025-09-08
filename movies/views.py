@@ -4,19 +4,25 @@ from .models import Movie
 from .serializers import MovieModelSerializer
 
 
-class MovieCreateView(generics.ListCreateAPIView):
-    queryset = Movie.objects.all()
-    serializer_class = MovieModelSerializer
-    permission_classes = [IsAdminUser,]
-
-
 class MovieListView(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieModelSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
 
 
-class MovieRetrieveUpdateDestroytView(generics.ListCreateAPIView):
+class MovieCreateView(generics.CreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieModelSerializer
     permission_classes = [IsAdminUser,]
+
+
+class MovieRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Movie.objects.all()
+    serializer_class = MovieModelSerializer
+    
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
